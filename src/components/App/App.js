@@ -43,13 +43,15 @@ function App() {
     }
   ]);
 
+  const [playlistName, setPlaylistName] = useState('My Playlist');
+
   return (
     <div>
       <h1>Jammming</h1>
       <SearchBar />
       <div className="App-playlist">
         <SearchResults searchResults={searchResults}/>
-        <Playlist playlistTracks={playlistTracks}/>
+        <Playlist playlistName={playlistName} playlistTracks={playlistTracks}/>
       </div>
     </div>
   );
