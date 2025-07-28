@@ -52,13 +52,17 @@ function App() {
     setPlaylistTracks(prev => [...prev, track]);
   }
 
+  const removeTrack = (track) => {
+    setPlaylistTracks(prevTracks => prevTracks.filter(savedTrack => savedTrack.id !== track.id));
+  };
+
   return (
     <div>
       <h1>Jammming</h1>
       <SearchBar />
       <div className="App-playlist">
         <SearchResults searchResults={searchResults} onAdd={addTrack}/>
-        <Playlist playlistName={playlistName} playlistTracks={playlistTracks}/>
+        <Playlist playlistName={playlistName} playlistTracks={playlistTracks} onRemove={removeTrack}/>
       </div>
     </div>
   );

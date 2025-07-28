@@ -1,8 +1,12 @@
 import React from 'react';
 
-function Track({name, artist, album, track, onAdd, isRemoval}) {
+function Track({name, artist, album, track, onAdd, isRemoval, onRemove}) {
     const handleAdd = () => {
         onAdd(track);
+    }
+
+    const handleRemove = () => {
+        onRemove(track);
     }
 
   return (
@@ -10,6 +14,7 @@ function Track({name, artist, album, track, onAdd, isRemoval}) {
       <h4>{name}</h4>
       <p>{artist} | {album}</p>
       {!isRemoval && <button onClick={handleAdd}>+</button>}
+      {isRemoval && <button onClick={handleRemove}>-</button>}
     </div>
   );
 }
