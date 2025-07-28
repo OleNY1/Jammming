@@ -43,7 +43,7 @@ function App() {
     }
   ]);
 
-  const [playlistName] = useState('My playlist');
+  const [playlistName, setPlaylistName] = useState('');
 
   const addTrack = (track) => {
     if (playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
@@ -62,7 +62,7 @@ function App() {
       <SearchBar />
       <div className="App-playlist">
         <SearchResults searchResults={searchResults} onAdd={addTrack}/>
-        <Playlist playlistName={playlistName} playlistTracks={playlistTracks} onRemove={removeTrack}/>
+        <Playlist playlistName={playlistName} playlistTracks={playlistTracks} onRemove={removeTrack} onNameChange={setPlaylistName}/>
       </div>
     </div>
   );
