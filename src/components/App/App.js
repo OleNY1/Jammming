@@ -28,7 +28,7 @@ function App() {
     }
   ]);
   
-  const [playlistTracks] = useState([
+  const [playlistTracks, setPlaylistTracks] = useState([
     {
       name: 'Love',
       artist: 'Lana Del Rey',
@@ -43,14 +43,21 @@ function App() {
     }
   ]);
 
-  const [playlistName, setPlaylistName] = useState('My Playlist');
+  const [playlistName] = useState('My playlist');
+
+  const addTrack = (track) => {
+    if (playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
+      return;
+    }
+    setPlaylistTracks(prev => [...prev, track]);
+  }
 
   return (
     <div>
       <h1>Jammming</h1>
       <SearchBar />
       <div className="App-playlist">
-        <SearchResults searchResults={searchResults}/>
+        <SearchResults searchResults={searchResults} onAdd={addTrack}/>
         <Playlist playlistName={playlistName} playlistTracks={playlistTracks}/>
       </div>
     </div>
@@ -58,3 +65,5 @@ function App() {
 }
 
 export default App;
+
+//A question: is this ok that after i add songs in my playlist they are shown in the playlist with the + button and when i press it i get an error "Uncaught runtime errors"
