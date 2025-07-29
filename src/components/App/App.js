@@ -33,13 +33,15 @@ function App() {
       name: 'Love',
       artist: 'Lana Del Rey',
       album: 'Lust for Life',
-      id: 4
+      id: 4,
+      uri: 'spotify:track:4iV5W9uYEdYUVa79Axb7Rh'
     },
     {
       name: 'Young and Beautiful',
       artist: 'Lana Del Rey',
       album: 'The Great Gatsby',
-      id: 5
+      id: 5,
+      uri: 'spotify:track:2a6kAkUIfm4Vw1tYSgSAlV'
     }
   ]);
 
@@ -56,13 +58,22 @@ function App() {
     setPlaylistTracks(prevTracks => prevTracks.filter(savedTrack => savedTrack.id !== track.id));
   };
 
+  const savePlaylist = () => {
+    const trackURIs = playlistTracks.map(track => track.uri);
+    console.log("Saving playlist:", playlistName);
+    console.log("Track URIs:", trackURIs);
+
+    setPlaylistName('');
+    setPlaylistTracks([]);
+  }
+
   return (
     <div>
       <h1>Jammming</h1>
       <SearchBar />
       <div className="App-playlist">
         <SearchResults searchResults={searchResults} onAdd={addTrack}/>
-        <Playlist playlistName={playlistName} playlistTracks={playlistTracks} onRemove={removeTrack} onNameChange={setPlaylistName}/>
+        <Playlist playlistName={playlistName} playlistTracks={playlistTracks} onRemove={removeTrack} onNameChange={setPlaylistName} onSave={savePlaylist}/>
       </div>
     </div>
   );
@@ -70,4 +81,3 @@ function App() {
 
 export default App;
 
-//A question: is this ok that after i add songs in my playlist they are shown in the playlist with the + button and when i press it i get an error "Uncaught runtime errors"
