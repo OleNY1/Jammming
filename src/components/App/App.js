@@ -1,12 +1,13 @@
-import React, {useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchBar from '../SearchBar/SearchBar';
 import SearchResults from '../SearchResults/SearchResults';
 import Playlist from '../Playlist/Playlist';
+import SpotifyAuth from '../../util/SpotifyAuth'; // ✅ New auth file
 
-//It is a React functional component
-//A React component is just a JavaScript function that returns JSX (UI)
 function App() {
-  //hard-coded track data
+  const [accessToken, setAccessToken] = useState(null);
+
+  // other state variables...
   const [searchResults] = useState([
     {
       name: 'Summertime Sadness',
@@ -27,7 +28,7 @@ function App() {
       id: 3
     }
   ]);
-  
+
   const [playlistTracks, setPlaylistTracks] = useState([
     {
       name: 'Love',
@@ -47,37 +48,64 @@ function App() {
 
   const [playlistName, setPlaylistName] = useState('');
 
-  const addTrack = (track) => {
-    if (playlistTracks.find(savedTrack => savedTrack.id === track.id)) {
-      return;
+
+
+  useEffect(() => {
+    const token = SpotifyAuth.getAccessToken();
+
+    if (token) {
+      setAccessToken(token);
+    } else {
+      SpotifyAuth.handleRedirect().then((newToken) => {
+        if (newToken) {
+          setAccessToken(newToken);
+        } else {
+          SpotifyAuth.login(); // Redirect to Spotify login
+        }
+      });
     }
+  }, []);
+
+  const addTrack = (track) => {
+    if (playlistTracks.find(savedTrack => savedTrack.id === track.id)) return;
     setPlaylistTracks(prev => [...prev, track]);
-  }
+  };
 
   const removeTrack = (track) => {
-    setPlaylistTracks(prevTracks => prevTracks.filter(savedTrack => savedTrack.id !== track.id));
+    setPlaylistTracks(prev => prev.filter(savedTrack => savedTrack.id !== track.id));
   };
 
   const savePlaylist = () => {
-    const trackURIs = playlistTracks.map(track => track.uri);
-    console.log("Saving playlist:", playlistName);
-    console.log("Track URIs:", trackURIs);
+    const uris = playlistTracks.map(track => track.uri);
+    console.log('Saving playlist:', playlistName);
+    console.log('Track URIs:', uris);
 
     setPlaylistName('');
     setPlaylistTracks([]);
-  }
+  };
 
   return (
     <div>
       <h1>Jammming</h1>
-      <SearchBar />
-      <div className="App-playlist">
-        <SearchResults searchResults={searchResults} onAdd={addTrack}/>
-        <Playlist playlistName={playlistName} playlistTracks={playlistTracks} onRemove={removeTrack} onNameChange={setPlaylistName} onSave={savePlaylist}/>
-      </div>
+      {!accessToken ? (
+        <p>Loading Spotify access...</p>
+      ) : (
+        <>
+          <SearchBar />
+          <div className="App-playlist">
+            <SearchResults searchResults={searchResults} onAdd={addTrack} />
+            <Playlist
+              playlistName={playlistName}
+              playlistTracks={playlistTracks}
+              onRemove={removeTrack}
+              onNameChange={setPlaylistName}
+              onSave={savePlaylist}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }
 
 export default App;
-
