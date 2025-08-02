@@ -6,28 +6,7 @@ import SpotifyAuth from '../../util/SpotifyAuth'; // ✅ New auth file
 
 function App() {
   const [accessToken, setAccessToken] = useState(null);
-
-  // other state variables...
-  const [searchResults] = useState([
-    {
-      name: 'Summertime Sadness',
-      artist: 'Lana Del Rey',
-      album: 'Summertime Sadness',
-      id: 1
-    },
-    {
-      name: 'Cherry',
-      artist: 'Lana Del Rey',
-      album: 'Lust for Life',
-      id: 2
-    },
-    {
-      name: 'Born to Die',
-      artist: 'Lana Del Rey',
-      album: 'Born to Die',
-      id: 3
-    }
-  ]);
+  const [searchResults, setSearchResults] = useState([]);
 
   const [playlistTracks, setPlaylistTracks] = useState([
     {
@@ -48,23 +27,37 @@ function App() {
 
   const [playlistName, setPlaylistName] = useState('');
 
+  const search = (term) => {
+    SpotifyAuth.searchTracks(term)
+      .then(results => {
+        setSearchResults(results);
+      })
+      .catch(err => {
+        console.error("Search error:", err);
+      });
+  };
+
 
 
   useEffect(() => {
     const token = SpotifyAuth.getAccessToken();
-
+    const code = new URLSearchParams(window.location.search).get('code');
+  
+    const hasVerifier = localStorage.getItem('code_verifier');
+  
     if (token) {
       setAccessToken(token);
-    } else {
-      SpotifyAuth.handleRedirect().then((newToken) => {
-        if (newToken) {
-          setAccessToken(newToken);
-        } else {
-          SpotifyAuth.login(); // Redirect to Spotify login
-        }
+    } else if (code && hasVerifier) {
+      SpotifyAuth.handleRedirect().then(newToken => {
+        if (newToken) setAccessToken(newToken);
       });
+    } else {
+      SpotifyAuth.login(); // Always run login first
     }
   }, []);
+  
+  
+  
 
   const addTrack = (track) => {
     if (playlistTracks.find(savedTrack => savedTrack.id === track.id)) return;
@@ -91,7 +84,7 @@ function App() {
         <p>Loading Spotify access...</p>
       ) : (
         <>
-          <SearchBar />
+          <SearchBar onSearch={search} />
           <div className="App-playlist">
             <SearchResults searchResults={searchResults} onAdd={addTrack} />
             <Playlist

@@ -1,12 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-function SearchBar() {
-  return (
-    <div>
-      <input placeholder="Enter a song, album, or artist" />
-      <button>Search</button>
-    </div>
-  );
-}
-
-export default SearchBar;
+function SearchBar({ onSearch }) {
+    const [term, setTerm] = useState('');
+  
+    const handleSearch = () => {
+      if (term.trim() !== '') {
+        onSearch(term);
+      }
+    };
+  
+    return (
+      <div>
+        <input
+          placeholder="Enter a song, album, or artist"
+          value={term}
+          onChange={(e) => setTerm(e.target.value)}
+        />
+        <button onClick={handleSearch}>Search</button>
+      </div>
+    );
+  }
+  
+  export default SearchBar;
