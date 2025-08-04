@@ -140,7 +140,66 @@ const SpotifyAuth = {
       album: track.album.name,
       uri: track.uri
     }));
+  },
+
+  async savePlaylist(name, uris) {
+    const token = this.getAccessToken();
+    if (!token) {
+      console.error("No access token available.");
+      return;
+    }
+  
+    try {
+      // Step 1: Get the user's Spotify ID
+      const userResponse = await fetch('https://api.spotify.com/v1/me', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      const userData = await userResponse.json();
+      const userId = userData.id;
+  
+      // Step 2: Create a new playlist
+      const createResponse = await fetch(`https://api.spotify.com/v1/users/${userId}/playlists`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          name: name,
+          description: 'Created with Jammming',
+          public: false
+        })
+      });
+  
+      const playlistData = await createResponse.json();
+      const playlistId = playlistData.id;
+  
+      // Step 3: Add tracks to the new playlist
+      const addResponse = await fetch(`https://api.spotify.com/v1/playlists/${playlistId}/tracks`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          uris: uris
+        })
+      });
+  
+      if (addResponse.ok) {
+        console.log(`Playlist "${name}" saved successfully!`);
+      } else {
+        const error = await addResponse.json();
+        console.error("Failed to add tracks:", error);
+      }
+    } catch (err) {
+      console.error("Error saving playlist:", err);
+    }
   }
 };
+
+
 
 export default SpotifyAuth;

@@ -70,12 +70,18 @@ function App() {
 
   const savePlaylist = () => {
     const uris = playlistTracks.map(track => track.uri);
-    console.log('Saving playlist:', playlistName);
-    console.log('Track URIs:', uris);
-
-    setPlaylistName('');
-    setPlaylistTracks([]);
-  };
+  
+    if (!playlistName || uris.length === 0) {
+      alert("Playlist name or tracks missing.");
+      return;
+    }
+  
+    SpotifyAuth.savePlaylist(playlistName, uris)
+      .then(() => {
+        setPlaylistName('');
+        setPlaylistTracks([]);
+      });
+  };  
 
   return (
     <div>
