@@ -12,6 +12,7 @@ function SearchBar({ onSearch }) {
     return (
       <div>
         <input
+          type="text"
           placeholder="Enter a song, album, or artist"
           value={term}
           onChange={(e) => setTerm(e.target.value)}

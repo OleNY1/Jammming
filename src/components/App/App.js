@@ -8,22 +8,7 @@ function App() {
   const [accessToken, setAccessToken] = useState(null);
   const [searchResults, setSearchResults] = useState([]);
 
-  const [playlistTracks, setPlaylistTracks] = useState([
-    {
-      name: 'Love',
-      artist: 'Lana Del Rey',
-      album: 'Lust for Life',
-      id: 4,
-      uri: 'spotify:track:4iV5W9uYEdYUVa79Axb7Rh'
-    },
-    {
-      name: 'Young and Beautiful',
-      artist: 'Lana Del Rey',
-      album: 'The Great Gatsby',
-      id: 5,
-      uri: 'spotify:track:2a6kAkUIfm4Vw1tYSgSAlV'
-    }
-  ]);
+  const [playlistTracks, setPlaylistTracks] = useState([]);
 
   const [playlistName, setPlaylistName] = useState('');
 
@@ -84,13 +69,14 @@ function App() {
   };  
 
   return (
-    <div>
+    <div className="container">
       <h1>Jammming</h1>
       {!accessToken ? (
         <p>Loading Spotify access...</p>
       ) : (
         <>
           <SearchBar onSearch={search} />
+          
           <div className="App-playlist">
             <SearchResults searchResults={searchResults} onAdd={addTrack} />
             <Playlist
@@ -108,3 +94,7 @@ function App() {
 }
 
 export default App;
+
+//copypaste it to the devtools
+// localStorage.clear();
+//window.location.href = 'http://127.0.0.1:3000';
